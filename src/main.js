@@ -1,103 +1,100 @@
 import iziToast from 'izitoast';
 import 'izitoast/dist/css/iziToast.min.css';
-import { getImagesByQuery, PER_PAGE } from './js/pixabay-api';
+
+import { getImagesByQuery } from './js/pixabay-api';
 import {
-  clearGallery,
   createGallery,
-  hideLoader,
-  hideLoadMoreButton,
-  loadMoreBtn,
+  clearGallery,
   showLoader,
+  hideLoader,
   showLoadMoreButton,
+  hideLoadMoreButton,
 } from './js/render-functions';
 
 const form = document.querySelector('.form');
+const loadMoreBtn = document.querySelector('.load-more');
 
-form.addEventListener('submit', searchButtonHandler);
-loadMoreBtn.addEventListener('click', loadMoreButtonHandler);
+let query = '';
+let page = 1;
+let totalHits = 0;
 
-let searchQuery = '';
+form.addEventListener('submit', onSearch);
+loadMoreBtn.addEventListener('click', onLoadMore);
 
-let pageNumber = 1;
-
-async function searchButtonHandler(e) {
+async function onSearch(e) {
   e.preventDefault();
-  searchQuery = e.target.elements['search-text'].value.trim();
-  if (searchQuery === '') {
-    iziToast.error({
-      title: 'Error',
-      message: 'Please enter a search query.',
-    });
+
+  query = e.target.elements['search-text'].value.trim();
+
+  if (!query) {
+    iziToast.error({ message: 'Please enter a search query' });
     return;
   }
-  hideLoadMoreButton();
+
+  page = 1;
   clearGallery();
-  pageNumber = 1;
+  hideLoadMoreButton();
   showLoader();
+
   try {
-    const { data } = await getImagesByQuery(searchQuery, pageNumber);
-    const imagesArray = data.hits;
-    if (imagesArray.length === 0) {
+    const data = await getImagesByQuery(query, page);
+    totalHits = data.totalHits;
+
+    if (data.hits.length === 0) {
       iziToast.error({
-        title: 'Error',
         message:
           'Sorry, there are no images matching your search query. Please try again!',
       });
       return;
     }
-    createGallery(imagesArray);
-    const totalPages = Math.ceil(data.totalHits / PER_PAGE);
-    if (pageNumber >= totalPages) {
-      iziToast.info({
-        title: 'Limit reached',
-        message: "We are sorry, but you've reached the end of search results.",
-      });
-    } else {
+
+    createGallery(data.hits);
+
+    if (page * 15 < totalHits) {
       showLoadMoreButton();
+    } else {
+      iziToast.info({
+        message: "We're sorry, but you've reached the end of search results.",
+      });
     }
   } catch (error) {
-    console.log(error);
-    iziToast.error({
-      title: 'Error',
-      message: 'Something went wrong. Please try again later.',
-    });
+    iziToast.error({ message: 'Something went wrong' });
   } finally {
     hideLoader();
   }
-  form.reset();
 }
 
-async function loadMoreButtonHandler(e) {
-  pageNumber += 1;
+async function onLoadMore() {
+  page += 1;
+  hideLoadMoreButton(); 
   showLoader();
-  try {
-    const { data } = await getImagesByQuery(searchQuery, pageNumber);
-    const imagesArray = data.hits;
-    createGallery(imagesArray);
-    const firstCard = document.querySelector('.gallery-item');
-    if (firstCard) {
-      const { height } = firstCard.getBoundingClientRect();
 
-      window.scrollBy({
-        top: height * 2,
-        behavior: 'smooth',
-      });
-    }
-    const totalPages = Math.ceil(data.totalHits / PER_PAGE);
-    if (pageNumber >= totalPages) {
-      hideLoadMoreButton();
+  try {
+    const data = await getImagesByQuery(query, page);
+    createGallery(data.hits);
+
+    smoothScroll();
+
+    if (page * 15 < totalHits) {
+      showLoadMoreButton();
+    } else {
       iziToast.info({
-        title: 'Limit reached',
-        message: "We are sorry, but you've reached the end of search results.",
+        message: "We're sorry, but you've reached the end of search results.",
       });
     }
   } catch (error) {
-    console.log(error);
-    iziToast.error({
-      title: 'Error',
-      message: 'Something went wrong. Please try again later.',
-    });
+    iziToast.error({ message: 'Something went wrong' });
   } finally {
     hideLoader();
   }
+}
+
+function smoothScroll() {
+  const cardHeight =
+    document.querySelector('.gallery-item')?.getBoundingClientRect().height || 0;
+
+  window.scrollBy({
+    top: cardHeight * 2,
+    behavior: 'smooth',
+  });
 }
