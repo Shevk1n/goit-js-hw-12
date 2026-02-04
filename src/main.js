@@ -6,11 +6,11 @@ import {
   createGallery,
   hideLoader,
   hideLoadMoreButton,
-  loadMoreBtn,
   showLoader,
   showLoadMoreButton,
 } from './js/render-functions';
 
+const loadMoreBtn = document.querySelector('.load-more');
 const form = document.querySelector('.form');
 
 form.addEventListener('submit', searchButtonHandler);
