@@ -1,4 +1,5 @@
-<!DOCTYPE html>
+
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -11,21 +12,22 @@
     <link rel="stylesheet" crossorigin href="/goit-js-hw-12/assets/index-DvPDDfy5.css">
   </head>
   <body>
-    <form class="form">
-      <label>
-        <input
-          type="text"
-          name="search-text"
-          placeholder="Search images..."
-          required
-        />
-      </label>
-      <button type="submit">Search</button>
-    </form>
-    <ul class="gallery"></ul>
-    <button class="load-more is-hidden" type="button">
-      Load More
-    </button>
-    <div class="loader is-hidden"></div>
+    <main>
+      <form class="form">
+        <label>
+          <input
+            type="text"
+            name="search-text"
+            placeholder="Search images..."
+            required
+          />
+        </label>
+        <button type="submit">Search</button>
+      </form>
+      <div class="loader hidden"></div>
+      <ul class="gallery"></ul>
+    </main>
+
+    <button type="button" class="load-more hidden">Load more</button>
   </body>
 </html>
