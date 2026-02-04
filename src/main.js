@@ -1,3 +1,4 @@
+
 import iziToast from 'izitoast';
 import 'izitoast/dist/css/iziToast.min.css';
 import { getImagesByQuery, PER_PAGE } from './js/pixabay-api';
@@ -6,11 +7,11 @@ import {
   createGallery,
   hideLoader,
   hideLoadMoreButton,
+  loadMoreBtn,
   showLoader,
   showLoadMoreButton,
 } from './js/render-functions';
 
-const loadMoreBtn = document.querySelector('.load-more');
 const form = document.querySelector('.form');
 
 form.addEventListener('submit', searchButtonHandler);
@@ -68,7 +69,6 @@ async function searchButtonHandler(e) {
 }
 
 async function loadMoreButtonHandler(e) {
-  hideLoadMoreButton();
   pageNumber += 1;
   showLoader();
   try {
