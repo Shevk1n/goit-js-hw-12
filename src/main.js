@@ -68,6 +68,7 @@ async function searchButtonHandler(e) {
 }
 
 async function loadMoreButtonHandler(e) {
+  hideLoadMoreButton();
   pageNumber += 1;
   showLoader();
   try {
