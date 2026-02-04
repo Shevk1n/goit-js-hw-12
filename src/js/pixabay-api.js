@@ -3,6 +3,8 @@ import axios from 'axios';
 const API_KEY = '54230749-f3a9f749c9b4d8e3a8cc4a241';
 const BASE_URL = 'https://pixabay.com/api/';
 
+export const PER_PAGE = 15; // ✅ ДОДАТИ
+
 export async function getImagesByQuery(query, page) {
   const response = await axios.get(BASE_URL, {
     params: {
@@ -12,7 +14,7 @@ export async function getImagesByQuery(query, page) {
       orientation: 'horizontal',
       safesearch: true,
       page,
-      per_page: 15,
+      per_page: PER_PAGE, // ✅ ВИКОРИСТОВУЄМО
     },
   });
 
